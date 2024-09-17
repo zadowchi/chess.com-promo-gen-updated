@@ -17,7 +17,6 @@ class ChessGen:
 
         self.email = "".join(random.choices(string.ascii_lowercase, k=10)) + "@gmail.com"
         self.username = "".join(random.choices(string.ascii_lowercase, k=10))
-        self.password = "".join(random.choices(string.ascii_lowercase + string.digits, k=10)) + "@F123456"
 
         self.session = Session(client_identifier="chrome120")
 
