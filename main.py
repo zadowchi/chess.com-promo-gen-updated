@@ -87,9 +87,9 @@ class ChessGen:
 
         try:
 
-            Counter.Registered += 1
-
             uuid = response.json()["data"]["uuid"]
+
+            Counter.Registered += 1
 
             Logger.Log("CREATED", "Account Registered", Colors.blue, email = self.email, uuid = uuid)
 
