@@ -17,8 +17,11 @@ class ChessGen:
 
         self.email = "".join(random.choices(string.ascii_lowercase, k=10)) + "@gmail.com"
         self.username = "".join(random.choices(string.ascii_lowercase, k=10))
+        self.password = "".join(random.choices(string.ascii_lowercase + string.digits, k=10)) + "@F123456"
 
-        self.session = Session(client_identifier="chrome120")
+        self.session = Session(
+            random_tls_extension_order=True
+        )
 
         self.session.proxies = get_formatted_proxy(random.choice(proxies)) if proxies else None
 
@@ -55,19 +58,28 @@ class ChessGen:
         
         except:
             Logger.Log("ERROR", "Failed to Fetch Access Token", Colors.red, status_code = str(response.status_code))
-
             Counter.Failed += 1
 
     def generate_account(self, access_token: str) -> str:
-
         headers = {
-            'Host': 'api.chess.com',
-            'User-Agent': 'Chesscom-Android/4.6.34-googleplay (Android/13; Galaxy S9; en_US; contact #android in Slack)',
-            'X-Client-Version': 'Android4.6.34',
-            'Accept-Language': 'en-US',
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'accept-language': 'en-US,en;q=0.8',
             'Authorization': 'Bearer ' + access_token,
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'cache-control': 'no-cache',
+            'pragma': 'no-cache',
+            'priority': 'u=0, i',
+            'sec-ch-ua': '"Chromium";v="128", "Not;A=Brand";v="24", "Brave";v="128"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'sec-fetch-user': '?1',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
         }
+
 
         params = {
             'signed': 'Android4.6.34',
@@ -87,9 +99,9 @@ class ChessGen:
 
         try:
 
-            uuid = response.json()["data"]["uuid"]
-
             Counter.Registered += 1
+
+            uuid = response.json()["data"]["uuid"]
 
             Logger.Log("CREATED", "Account Registered", Colors.blue, email = self.email, uuid = uuid)
 
@@ -97,7 +109,7 @@ class ChessGen:
 
         except:
             
-            Logger.Log("ERROR", "Failed to Register Account", Colors.red, status_code = str(response.status_code))
+            # Logger.Log("ERROR", "Failed to Register Account", Colors.red, status_code = str(response.status_code))
 
             Counter.Failed += 1
         
@@ -148,12 +160,10 @@ class ChessGen:
     def start(self):
 
         access = self._get_access_token()
-
         if not access:
             return
 
         uuid = self.generate_account(access)
-
         if uuid:
             self.fetch_promo(uuid)
 
