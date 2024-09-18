@@ -17,9 +17,8 @@ class ChessGen:
 
         self.email = "".join(random.choices(string.ascii_lowercase, k=10)) + "@gmail.com"
         self.username = "".join(random.choices(string.ascii_lowercase, k=10))
-        self.password = "".join(random.choices(string.ascii_lowercase + string.digits, k=10)) + "@F123456"
 
-        self.session = requests.Session()
+        self.session = Session(client_identifier="chrome120")
 
         self.session.proxies = get_formatted_proxy(random.choice(proxies)) if proxies else None
 
@@ -55,7 +54,7 @@ class ChessGen:
             return access_token
         
         except:
-            # Logger.Log("ERROR", "Failed to Fetch Access Token", Colors.red, status_code = str(response.status_code))
+            Logger.Log("ERROR", "Failed to Fetch Access Token", Colors.red, status_code = str(response.status_code))
 
             Counter.Failed += 1
 
@@ -88,9 +87,9 @@ class ChessGen:
 
         try:
 
-            Counter.Registered += 1
-
             uuid = response.json()["data"]["uuid"]
+
+            Counter.Registered += 1
 
             Logger.Log("CREATED", "Account Registered", Colors.blue, email = self.email, uuid = uuid)
 
@@ -98,7 +97,7 @@ class ChessGen:
 
         except:
             
-            # Logger.Log("ERROR", "Failed to Register Account", Colors.red, status_code = str(response.status_code))
+            Logger.Log("ERROR", "Failed to Register Account", Colors.red, status_code = str(response.status_code))
 
             Counter.Failed += 1
         
